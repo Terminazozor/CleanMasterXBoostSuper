@@ -15,15 +15,22 @@ namespace CleanMasterXBoostSuper
     {
         public Form1()
         {
-            InitializeComponent();
-            Cleaning c= new Cleaning();
-            c.ConfigCleaning();
-            c.LunchCleaning();
-            
+            InitializeComponent();     
             //afficher un fichier dans une listbox
             /*System.IO.DirectoryInfo di = new System.IO.DirectoryInfo("c:\\");
             System.IO.FileSystemInfo[] files = di.GetFileSystemInfos();
             checkedListBox1.Items.AddRange(files);*/
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Settings s = new Settings();
+            s.ReadSettings();
+            /*s.SetDestination();
+            s.AddCopyTask();
+            List<CopyTask> listCT = s.CopyTasks;
+            CopyManager cm = new CopyManager(listCT);
+            cm.run();*/
         }
     }
 }

@@ -10,8 +10,8 @@ namespace CleanMasterXBoostSuper
     {
         public string Destination { get;}
         public string Source { get;}
-        public List<string> FileToNoCopy { get; }
-        public CopyTask(string source,string destination, List<string> fileToNoCopy)
+        public string FileToNoCopy { get; }
+        public CopyTask(string source,string destination, string fileToNoCopy)
         {
             this.Destination = destination;
             this.Source = source;

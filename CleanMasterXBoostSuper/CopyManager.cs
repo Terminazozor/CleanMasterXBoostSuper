@@ -23,9 +23,17 @@ namespace CleanMasterXBoostSuper
         {
             foreach(CopyTask task in CopyTasks)
             {
-                ProcessStartInfo infos = new ProcessStartInfo("xcopy",task.Source+" "+task.Destination+" /e");
-                Process proc = Process.Start(infos);
-                AllTasksCompleted.Add(task);
+                try
+                {
+                    ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + " /e /h /v /d /y /i");
+                    Console.WriteLine("fichier: " + task.Source + " copier dans " + task.Destination);
+                    Process proc = Process.Start(infos);
+                    AllTasksCompleted.Add(task);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
     }
