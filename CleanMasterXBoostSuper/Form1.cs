@@ -26,11 +26,9 @@ namespace CleanMasterXBoostSuper
         {
             Settings s = new Settings();
             s.ReadSettings();
-            /*s.SetDestination();
-            s.AddCopyTask();
-            List<CopyTask> listCT = s.CopyTasks;
+;            List<CopyTask> listCT = s.CopyTasks;
             CopyManager cm = new CopyManager(listCT);
-            cm.run();*/
+            cm.run();
         }
     }
 }

@@ -15,9 +15,12 @@ namespace CleanMasterXBoostSuper
     {
         public string Destination { get; private set; }
         public List<CopyTask> CopyTasks { get; private set; }
+
+        string day; 
         public Settings()
         {
             CopyTasks = new List<CopyTask>();
+            day = DateTime.Now.ToString("dddd");
         }
         public void SetDestination()
         {
@@ -50,10 +53,10 @@ namespace CleanMasterXBoostSuper
                     List<string> fileToNotCopy = new List<string>();
                     SelectionOfFile selectionOfFile = new SelectionOfFile(dialog.SelectedPath, fileToNotCopy);
                     selectionOfFile.ShowDialog();
-                    String[] splitPath = dialog.SelectedPath.Split('\\');
-                    String folderName = splitPath[splitPath.Length - 1];
-                    String stringFile = ListToString(fileToNotCopy);
-                    CopyTask copyTaskToAdd = new CopyTask(dialog.SelectedPath, Destination + @"\" + DateTime.Now.ToString("dddd") + @"\" + folderName, stringFile);
+                    string[] splitPath = dialog.SelectedPath.Split('\\');
+                    string folderName = splitPath[splitPath.Length - 1];
+                    string stringFile = ListToString(fileToNotCopy);
+                    CopyTask copyTaskToAdd = new CopyTask(dialog.SelectedPath, Destination + @"\" + day + @"\" + folderName, stringFile);
                     CopyTasks.Add(copyTaskToAdd);
                 }
                 else
@@ -83,13 +86,17 @@ namespace CleanMasterXBoostSuper
         {
             try
             {
-                using (ResXResourceReader resxReader = new ResXResourceReader(@".\SettingsSave.resx"))
+                using (ResXResourceSet resxSet = new ResXResourceSet(@".\SettingsSave.resx"))
                 {
-                    foreach (DictionaryEntry entry in resxReader)
+                    Destination = resxSet.GetString("Destination");
+                    string[] allSource = resxSet.GetString("Source").Split('|');
+                    for(int i = 0; i < allSource.Length-1; i++)
                     {
-                        Console.WriteLine(entry.Value.ToString());
+                        string[] splitPath = allSource[i].Split('\\');
+                        string folderName = splitPath[splitPath.Length - 1];
+                        CopyTasks.Add(new CopyTask(allSource[i], Destination + @"\" + day + @"\" + folderName, null));
                     }
-                }
+                }           
             }
             catch (Exception e)
             {
@@ -102,7 +109,18 @@ namespace CleanMasterXBoostSuper
             {
                 SetDestination();
                 resx.AddResource("Destination",Destination);
+                AddCopyTask();
+                resx.AddResource("Source", SaveTask());
             }
+        }
+        public string SaveTask()
+        {
+            string temp="";
+            foreach (CopyTask task in CopyTasks)
+            {
+                temp = temp + task.Source+"|";
+            }
+            return temp;
         }
     }
 }
