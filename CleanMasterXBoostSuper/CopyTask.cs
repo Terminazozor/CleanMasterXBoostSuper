@@ -8,12 +8,14 @@ namespace CleanMasterXBoostSuper
 {
     internal class CopyTask
     {
-        public String Destination { get;}
-        public String Source { get;}
-        public CopyTask(String source,String destination)
+        public string Destination { get;}
+        public string Source { get;}
+        public List<string> FileToNoCopy { get; }
+        public CopyTask(string source,string destination, List<string> fileToNoCopy)
         {
             this.Destination = destination;
             this.Source = source;
+            this.FileToNoCopy = fileToNoCopy;
         }
     }
 }

@@ -9,15 +9,29 @@ namespace CleanMasterXBoostSuper
 {
     public class Cleaning
     {
-        public void ConfigCleaning()
+        public int ConfigCleaning()
         {
             ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe","sageset:1");
-            Process proc = Process.Start(infos);
+            using (Process proc = Process.Start(infos))
+            {
+                if (!proc.HasExited)
+                {
+                    proc.WaitForExit();
+                }
+                return proc.ExitCode;
+            }
         }
-        public void LunchCleaning()
+        public int LunchCleaning()
         {
             ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe","sagerun:1");
-            Process proc = Process.Start(infos);
+            using(Process proc = Process.Start(infos))
+            {
+                if (!proc.HasExited)
+                {
+                    proc.WaitForExit();
+                }
+                return proc.ExitCode;
+            }
         }
     }
 }

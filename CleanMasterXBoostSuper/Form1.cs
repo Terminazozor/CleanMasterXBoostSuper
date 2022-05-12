@@ -16,13 +16,14 @@ namespace CleanMasterXBoostSuper
         public Form1()
         {
             InitializeComponent();
-            CopyTask ct = new CopyTask(@"C:\Users\Valentin\Documents\Cours\bloc2\c#\test\a_copier", @"C:\Users\Valentin\Documents\Cours\bloc2\c#\test\copier");
-            CopyTask ct2 = new CopyTask(@"C:\Users\Valentin\Documents\Cours\bloc2\c#\test\copier2", @"C:\Users\Valentin\Documents\Cours\bloc2\c#\test\copier");
-            List<CopyTask> list = new List<CopyTask>();
-            list.Add(ct);
-            list.Add(ct2);
-            CopyManager cm = new CopyManager(list);
-            cm.run();
+            Cleaning c= new Cleaning();
+            c.ConfigCleaning();
+            c.LunchCleaning();
+            
+            //afficher un fichier dans une listbox
+            /*System.IO.DirectoryInfo di = new System.IO.DirectoryInfo("c:\\");
+            System.IO.FileSystemInfo[] files = di.GetFileSystemInfos();
+            checkedListBox1.Items.AddRange(files);*/
         }
     }
 }
