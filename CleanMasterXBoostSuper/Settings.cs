@@ -46,7 +46,7 @@ namespace CleanMasterXBoostSuper
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                dialog.Description = "Ouvez le fichier que vous voulez copier";
+                dialog.Description = "Ouvez le fichier que vous voulez copier\nAppuyer sur annuler pour stopper";
                 DialogResult result = dialog.ShowDialog();
                 if (result == DialogResult.OK && !string.IsNullOrEmpty(dialog.SelectedPath))
                 {
@@ -58,6 +58,7 @@ namespace CleanMasterXBoostSuper
                     string stringFile = ListToString(fileToNotCopy);
                     CopyTask copyTaskToAdd = new CopyTask(dialog.SelectedPath, Destination + @"\" + day + @"\" + folderName, stringFile);
                     CopyTasks.Add(copyTaskToAdd);
+                    AddCopyTask();
                 }
                 else
                 {
@@ -82,13 +83,14 @@ namespace CleanMasterXBoostSuper
                 return temp;
             }
         }
-        public void ReadSettings()
+        public Boolean ReadSettings()
         {
             try
             {
                 using (ResXResourceSet resxSet = new ResXResourceSet(@".\SettingsSave.resx"))
                 {
                     Destination = resxSet.GetString("Destination");
+                    Console.WriteLine(resxSet.GetString("Source"));
                     string[] allSource = resxSet.GetString("Source").Split('|');
                     for(int i = 0; i < allSource.Length-1; i++)
                     {
@@ -96,11 +98,13 @@ namespace CleanMasterXBoostSuper
                         string folderName = splitPath[splitPath.Length - 1];
                         CopyTasks.Add(new CopyTask(allSource[i], Destination + @"\" + day + @"\" + folderName, null));
                     }
-                }           
+                }          
+                return true;
             }
             catch (Exception e)
             {
                 SaveSettings();
+                return false;
             }
         }
         public void SaveSettings()
@@ -109,8 +113,14 @@ namespace CleanMasterXBoostSuper
             {
                 SetDestination();
                 resx.AddResource("Destination",Destination);
-                AddCopyTask();
-                resx.AddResource("Source", SaveTask());
+                try
+                {
+                    AddCopyTask();
+                }
+                catch(Exception e)
+                {
+                    resx.AddResource("Source", SaveTask());
+                }
             }
         }
         public string SaveTask()

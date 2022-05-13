@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,17 +17,17 @@ namespace CleanMasterXBoostSuper
         public Form1()
         {
             InitializeComponent();     
-            //afficher un fichier dans une listbox
-            /*System.IO.DirectoryInfo di = new System.IO.DirectoryInfo("c:\\");
-            System.IO.FileSystemInfo[] files = di.GetFileSystemInfos();
-            checkedListBox1.Items.AddRange(files);*/
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Cleaning c = new Cleaning();
             Settings s = new Settings();
-            s.ReadSettings();
-;            List<CopyTask> listCT = s.CopyTasks;
+            if (!s.ReadSettings())
+            {
+                c.ConfigCleaning();
+            }
+            List<CopyTask> listCT = s.CopyTasks;
             CopyManager cm = new CopyManager(listCT);
             cm.run();
         }
