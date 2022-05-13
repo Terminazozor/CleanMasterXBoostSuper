@@ -63,45 +63,38 @@ namespace CleanMasterXBoostSuper
             }
             return -1;
         }
-        public void run(object param)
+        public void run()
         {
-            Boolean stop = (Boolean)param;
             CopyProgress cp = new CopyProgress();
             cp.Show();
             cp.UpdateProgress(0,"Start");
             foreach(CopyTask task in CopyTasks)
             {
-                if (!stop)
+
+                cp.Update();
+                if (!isLowFreeSpace())
                 {
-                    cp.Update();
-                    if (!isLowFreeSpace())
+                    File.WriteAllText(@"./ToNotCopy.txt", task.FileToNoCopy);
+                    ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + "/q /e /h /v /d /y /i /exclude:ToNotCopy.txt");
+                    infos.CreateNoWindow = true;
+                    infos.UseShellExecute = false;
+                    Process proc = new Process();
+                    proc = Process.Start(infos);
+                    AllTasksCompleted.Add(task);
+                    Console.WriteLine(task.Destination);
+                    cp.UpdateProgress(TaskState(), "Copie de " + task.Source);
+                    proc.WaitForExit();
+                    if(proc.ExitCode != 0)
                     {
-                        Console.WriteLine(task.Source);
-                        ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + "/q /e /h /v /d /y /i");
-                        infos.CreateNoWindow = true;
-                        infos.UseShellExecute = false;
-                        Process proc = new Process();
-                        proc = Process.Start(infos);
-                        AllTasksCompleted.Add(task);
-                        Console.WriteLine(task.Destination);
-                        cp.UpdateProgress(TaskState(), "Copie de " + task.Source);
-                        proc.WaitForExit();
-                        if(proc.ExitCode != 0)
-                        {
-                            Happening=Happening+"Copie de "+task.Source+" dans "+task.Destination+" reussi\n";
-                        }
-                        else
-                        {
-                            Happening =Happening+ "Copie de " + task.Source + " dans " + task.Destination + " echec\n";
-                        }
+                        Happening=Happening+"Copie de "+task.Source+" dans "+task.Destination+" echec\n";
+                    }
+                    else
+                    {
+                        Happening =Happening+ "Copie de " + task.Source + " dans " + task.Destination + " reussi\n";
                     }
                 }
-                else
-                {
-                    cp.UpdateProgress(0, "Stop");
-                    Console.WriteLine("arret avec stop");
-                }
             }
+            File.Delete(@"./ToNotCopy.txt");
         }
         public int TaskState()
         {

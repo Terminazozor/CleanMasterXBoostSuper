@@ -70,17 +70,16 @@ namespace CleanMasterXBoostSuper
         }
         public string ListToString(List<string> fileToNotCopy)
         {
-            if (fileToNotCopy.Count == 0)
+            if (fileToNotCopy.First()=="")
             {
-                return null;
+                return "";
             }
             else
             {
-                string temp = fileToNotCopy.First();
-                fileToNotCopy.Remove(fileToNotCopy.First());
+                string temp = "";
                 foreach (string file in fileToNotCopy)
                 {
-                    temp = temp + "+" + file;
+                    temp = temp+file+"\n";
                 }
                 return temp;
             }
@@ -94,11 +93,12 @@ namespace CleanMasterXBoostSuper
                     Destination = resxSet.GetString("Destination");
                     Mail = resxSet.GetString("Mail");
                     string[] allSource = resxSet.GetString("Source").Split('|');
-                    for(int i = 0; i < allSource.Length-1; i++)
+                    string[] allFileNotToCopy = resxSet.GetString("FileToNotCopy").Split('|');
+                    for (int i = 0; i < allSource.Length-1; i++)
                     {
                         string[] splitPath = allSource[i].Split('\\');
                         string folderName = splitPath[splitPath.Length - 1];
-                        CopyTasks.Add(new CopyTask(allSource[i], Destination + @"\" + day + @"\" + folderName, null));
+                        CopyTasks.Add(new CopyTask(allSource[i], Destination + @"\" + day + @"\" + folderName, allFileNotToCopy[i]));
                     }
                     return true;
                 }          
@@ -127,8 +127,19 @@ namespace CleanMasterXBoostSuper
                 catch(Exception e)
                 {
                     resx.AddResource("Source", SaveTask());
+                    resx.AddResource("FileToNotCopy", SaveFileNotToCopy());
                 }
+                
             }
+        }
+        public string SaveFileNotToCopy()
+        {
+            string temp = "";
+            foreach (CopyTask task in CopyTasks)
+            {
+                temp = temp + task.FileToNoCopy + "|";
+            }
+            return temp;
         }
         public string SaveTask()
         {

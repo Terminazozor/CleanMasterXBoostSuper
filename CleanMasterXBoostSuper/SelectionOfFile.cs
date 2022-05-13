@@ -29,9 +29,15 @@ namespace CleanMasterXBoostSuper
 
         private void button1_Click(object sender, EventArgs e)
         {
+            int i = 0;
             foreach(object checkeditem in checkedListFile.CheckedItems)
             {
                 FileToNotCopy.Add((string)checkeditem.ToString());
+                i++;
+            }
+            if(i == 0)
+            {
+                FileToNotCopy.Add("");
             }
             this.Close();
         }

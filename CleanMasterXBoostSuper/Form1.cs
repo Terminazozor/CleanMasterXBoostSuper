@@ -34,16 +34,14 @@ namespace CleanMasterXBoostSuper
             {
                 c.ConfigCleaning();
             }
-            else
-            {
-                Console.WriteLine("sorti read");
-            }
             List<CopyTask> listCT = s.CopyTasks;
             Thread clean = new Thread(c.DoCleaning);
             clean.Start();
             CopyManager cm = new CopyManager(listCT);
-            Thread copy = new Thread(new ParameterizedThreadStart(cm.run));
-            copy.Start(stop);
+            Thread copy = new Thread(cm.run);
+            copy.Start();
+            clean.Join();
+            copy.Join();
             SendMail sm = new SendMail();
             sm.NewMail(c.Happening+cm.Happening, s.Mail);
         }
