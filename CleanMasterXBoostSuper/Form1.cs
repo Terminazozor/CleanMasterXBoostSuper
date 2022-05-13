@@ -16,11 +16,7 @@ namespace CleanMasterXBoostSuper
     {
         public Form1()
         {
-            InitializeComponent();     
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
+            InitializeComponent();
             Cleaning c = new Cleaning();
             Settings s = new Settings();
             if (!s.ReadSettings())
@@ -28,8 +24,15 @@ namespace CleanMasterXBoostSuper
                 c.ConfigCleaning();
             }
             List<CopyTask> listCT = s.CopyTasks;
+            Thread clean = new Thread(c.DoCleaning);
+            clean.Start();
             CopyManager cm = new CopyManager(listCT);
-            cm.run();
+            Thread copy = new Thread(cm.run);
+            copy.Start();
+            clean.Join();
+            copy.Join();
+            //this.Close();
         }
+
     }
 }

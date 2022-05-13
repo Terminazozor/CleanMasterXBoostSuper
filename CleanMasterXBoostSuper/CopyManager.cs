@@ -26,6 +26,7 @@ namespace CleanMasterXBoostSuper
             }
             string disk = CopyTasks.First().Destination.Split('\\')[0];
             long freeSpace = FreeSpaceDisk(disk);
+            Console.WriteLine("freeSpace ="+freeSpace+" sumFile ="+sumFile);
             if(freeSpace > sumFile)
             {
                 return false;
@@ -54,7 +55,7 @@ namespace CleanMasterXBoostSuper
         {
             foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                if (drive.IsReady && drive.Name == driveName)
+                if (drive.IsReady && drive.Name == (driveName+@"\"))
                 {
                     return drive.TotalFreeSpace;
                 }
@@ -67,6 +68,7 @@ namespace CleanMasterXBoostSuper
             {
                 try
                 {
+                    Console.WriteLine(isLowFreeSpace());
                     if (!isLowFreeSpace())
                     {
                         ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + " /e /h /v /d /y /i");
@@ -80,6 +82,20 @@ namespace CleanMasterXBoostSuper
                     Console.WriteLine(e);
                 }
             }
+        }
+        public int TaskState()
+        {
+            long sumDid = 0;
+            long sumToDo = 0;
+            foreach (CopyTask CopyTask in CopyTasks)
+            {
+                sumToDo = sumToDo + DirSize(new DirectoryInfo(CopyTask.Source));
+            }
+            foreach (CopyTask CopyTask in CopyTasks)
+            {
+                sumDid = sumDid + DirSize(new DirectoryInfo(CopyTask.Source));
+            }
+            return 0;
         }
     }
 }

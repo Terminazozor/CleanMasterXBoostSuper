@@ -21,6 +21,16 @@ namespace CleanMasterXBoostSuper
                 return proc.ExitCode;
             }
         }
+        public void DoCleaning() {
+            if (LunchCleaning() == 0)
+            {
+                Console.WriteLine("Nettoyage reussi");
+            }
+            else
+            {
+                Console.WriteLine("Erreur pendant le netoyage");
+            }
+        }
         public int LunchCleaning()
         {
             ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe","sagerun:1");
