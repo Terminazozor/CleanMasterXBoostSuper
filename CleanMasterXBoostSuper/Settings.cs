@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,12 +16,13 @@ namespace CleanMasterXBoostSuper
     {
         public string Destination { get; private set; }
         public List<CopyTask> CopyTasks { get; private set; }
-
+        public string Mail { get; private set; }
         string day; 
         public Settings()
         {
             CopyTasks = new List<CopyTask>();
             day = DateTime.Now.ToString("dddd");
+            Mail = "";
         }
         public void SetDestination()
         {
@@ -90,7 +92,7 @@ namespace CleanMasterXBoostSuper
                 using (ResXResourceSet resxSet = new ResXResourceSet(@".\SettingsSave.resx"))
                 {
                     Destination = resxSet.GetString("Destination");
-                    Console.WriteLine(resxSet.GetString("Source"));
+                    Mail = resxSet.GetString("Mail");
                     string[] allSource = resxSet.GetString("Source").Split('|');
                     for(int i = 0; i < allSource.Length-1; i++)
                     {
@@ -98,8 +100,8 @@ namespace CleanMasterXBoostSuper
                         string folderName = splitPath[splitPath.Length - 1];
                         CopyTasks.Add(new CopyTask(allSource[i], Destination + @"\" + day + @"\" + folderName, null));
                     }
+                    return true;
                 }          
-                return true;
             }
             catch (Exception e)
             {
@@ -111,8 +113,13 @@ namespace CleanMasterXBoostSuper
         {
             using (ResXResourceWriter resx = new ResXResourceWriter(@".\SettingsSave.resx"))
             {
+                while (String.IsNullOrEmpty(Mail)) 
+                {
+                    Mail = Interaction.InputBox("Entrez votre adresse mail :", "Mail", "");
+                }
                 SetDestination();
                 resx.AddResource("Destination",Destination);
+                resx.AddResource("Mail", Mail);
                 try
                 {
                     AddCopyTask();

@@ -9,6 +9,7 @@ namespace CleanMasterXBoostSuper
 {
     public class Cleaning
     {
+        public string Happening { get; private set; }
         public int ConfigCleaning()
         {
             ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe","sageset:1");
@@ -24,11 +25,11 @@ namespace CleanMasterXBoostSuper
         public void DoCleaning() {
             if (LunchCleaning() == 0)
             {
-                Console.WriteLine("Nettoyage reussi");
+                Happening = "Nettoyage reussis\n";
             }
             else
             {
-                Console.WriteLine("Erreur pendant le netoyage");
+                Happening = "Erreur dans le nettoyage\n";
             }
         }
         public int LunchCleaning()

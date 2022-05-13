@@ -13,9 +13,11 @@ namespace CleanMasterXBoostSuper
     {
         List<CopyTask> AllTasksCompleted = new List<CopyTask>();
         List<CopyTask> CopyTasks;
+        public string Happening { get; private set; }
         public CopyManager(List<CopyTask> CopyTasks)
         {
             this.CopyTasks = CopyTasks;
+            Happening = "";
         }
         public Boolean isLowFreeSpace()
         {
@@ -26,7 +28,6 @@ namespace CleanMasterXBoostSuper
             }
             string disk = CopyTasks.First().Destination.Split('\\')[0];
             long freeSpace = FreeSpaceDisk(disk);
-            Console.WriteLine("freeSpace ="+freeSpace+" sumFile ="+sumFile);
             if(freeSpace > sumFile)
             {
                 return false;
@@ -62,24 +63,43 @@ namespace CleanMasterXBoostSuper
             }
             return -1;
         }
-        public void run()
+        public void run(object param)
         {
+            Boolean stop = (Boolean)param;
+            CopyProgress cp = new CopyProgress();
+            cp.Show();
+            cp.UpdateProgress(0,"Start");
             foreach(CopyTask task in CopyTasks)
             {
-                try
+                if (!stop)
                 {
-                    Console.WriteLine(isLowFreeSpace());
+                    cp.Update();
                     if (!isLowFreeSpace())
                     {
-                        ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + " /e /h /v /d /y /i");
-                        Console.WriteLine("fichier: " + task.Source + " copier dans " + task.Destination);
-                        Process proc = Process.Start(infos);
+                        Console.WriteLine(task.Source);
+                        ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + "/q /e /h /v /d /y /i");
+                        infos.CreateNoWindow = true;
+                        infos.UseShellExecute = false;
+                        Process proc = new Process();
+                        proc = Process.Start(infos);
                         AllTasksCompleted.Add(task);
+                        Console.WriteLine(task.Destination);
+                        cp.UpdateProgress(TaskState(), "Copie de " + task.Source);
+                        proc.WaitForExit();
+                        if(proc.ExitCode != 0)
+                        {
+                            Happening=Happening+"Copie de "+task.Source+" dans "+task.Destination+" reussi\n";
+                        }
+                        else
+                        {
+                            Happening =Happening+ "Copie de " + task.Source + " dans " + task.Destination + " echec\n";
+                        }
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e);
+                    cp.UpdateProgress(0, "Stop");
+                    Console.WriteLine("arret avec stop");
                 }
             }
         }
@@ -91,11 +111,13 @@ namespace CleanMasterXBoostSuper
             {
                 sumToDo = sumToDo + DirSize(new DirectoryInfo(CopyTask.Source));
             }
-            foreach (CopyTask CopyTask in CopyTasks)
+            foreach (CopyTask CopyTask in AllTasksCompleted)
             {
                 sumDid = sumDid + DirSize(new DirectoryInfo(CopyTask.Source));
             }
-            return 0;
+            float div=(float)sumDid /sumToDo;
+            float pourcent = div * 100;
+            return (int)pourcent;
         }
     }
 }

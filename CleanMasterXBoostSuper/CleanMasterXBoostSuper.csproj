@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -49,6 +50,12 @@
   <ItemGroup>
     <Compile Include="Cleaning.cs" />
     <Compile Include="CopyManager.cs" />
+    <Compile Include="CopyProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CopyProgress.Designer.cs">
+      <DependentUpon>CopyProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="CopyTask.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -64,7 +71,11 @@
     <Compile Include="SelectionOfFile.Designer.cs">
       <DependentUpon>SelectionOfFile.cs</DependentUpon>
     </Compile>
+    <Compile Include="SendMail.cs" />
     <Compile Include="Settings.cs" />
+    <EmbeddedResource Include="CopyProgress.resx">
+      <DependentUpon>CopyProgress.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
