@@ -15,19 +15,18 @@ namespace CleanMasterXBoostSuper
 {
     public partial class Form1 : Form
     {
-        volatile Boolean stop;
+        CancellationTokenSource cts =new CancellationTokenSource();
         public Form1()
         {
             InitializeComponent();
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            stop = true;
+            cts.Cancel();
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
+        private async void Form1_Shown(object sender, EventArgs e)
         {
-            stop = false;
             Cleaning c = new Cleaning();
             Settings s = new Settings();
             if (!s.ReadSettings())
@@ -35,32 +34,22 @@ namespace CleanMasterXBoostSuper
                 c.ConfigCleaning();
             }
             List<CopyTask> listCT = s.CopyTasks;
-            Thread clean = new Thread(c.DoCleaning);
-            clean.Start();
-            CopyManager cm = new CopyManager(listCT);
-            Thread copy = new Thread(cm.run);
-            copy.Start();
-            clean.Join();
-            copy.Join();
-            SendMail sm = new SendMail();
-            sm.NewMail(c.Happening+cm.Happening, s.Mail);
-            if (stop)
-            {
-                Close();
-            }
-            else
-            {
-                ProcessStartInfo startInfo =
-                new ProcessStartInfo("shutdown.exe", "-s /t 0");
-                Process.Start(startInfo);
-            }
+            CancellationToken token = cts.Token;
+            var taskClean = Task.Run(() => c.DoCleaning(token));
+            CopyManagerRobocopy cm = new CopyManagerRobocopy(listCT);
+            //CopyManager cm = new CopyManager(listCT);
+            var taskCopy = Task.Run(() => cm.run(token));
+            await Task.WhenAll(taskClean, taskCopy);
+            //SendMail sm = new SendMail();
+            //sm.NewMail(c.Happening+cm.Happening, s.Mail);
+            //ProcessStartInfo startInfo =
+            //new ProcessStartInfo("shutdown.exe", "-s /t 0");
+            //Process.Start(startInfo);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             File.Delete(@".\SettingsSave.resx");
-            stop = true;
-            Close();
         }
     }
 }

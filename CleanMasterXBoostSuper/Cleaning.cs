@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CleanMasterXBoostSuper
@@ -22,8 +23,8 @@ namespace CleanMasterXBoostSuper
                 return proc.ExitCode;
             }
         }
-        public void DoCleaning() {
-            if (LunchCleaning() == 0)
+        public void DoCleaning(CancellationToken token) {
+            if (LunchCleaning(token) == 0)
             {
                 Happening = "Nettoyage reussis\n";
             }
@@ -32,14 +33,17 @@ namespace CleanMasterXBoostSuper
                 Happening = "Erreur dans le nettoyage\n";
             }
         }
-        public int LunchCleaning()
+        public int LunchCleaning(CancellationToken token)
         {
             ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe","sagerun:1");
             using(Process proc = Process.Start(infos))
             {
-                if (!proc.HasExited)
+                while (!proc.HasExited)
                 {
-                    proc.WaitForExit();
+                    if (token.IsCancellationRequested)
+                    {
+                        proc.Kill();
+                    }
                 }
                 return proc.ExitCode;
             }

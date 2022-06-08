@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Cleaning.cs" />
     <Compile Include="CopyManager.cs" />
+    <Compile Include="CopyManagerRobocopy.cs" />
     <Compile Include="CopyProgress.cs">
       <SubType>Form</SubType>
     </Compile>

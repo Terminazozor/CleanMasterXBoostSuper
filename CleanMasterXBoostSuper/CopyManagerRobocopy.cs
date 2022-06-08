@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 
 namespace CleanMasterXBoostSuper
 {
-    internal class CopyManager
+    internal class CopyManagerRobocopy
     {
         List<CopyTask> AllTasksCompleted = new List<CopyTask>();
         List<CopyTask> CopyTasks;
         public string Happening { get; private set; }
-        public CopyManager(List<CopyTask> CopyTasks)
+        public CopyManagerRobocopy(List<CopyTask> CopyTasks)
         {
             this.CopyTasks = CopyTasks;
             Happening = "";
         }
         public Boolean isLowFreeSpace()
         {
-            long sumFile=0;
+            long sumFile = 0;
             foreach (CopyTask CopyTask in CopyTasks)
             {
-                sumFile = sumFile+DirSize(new DirectoryInfo(CopyTask.Source));
+                sumFile = sumFile + DirSize(new DirectoryInfo(CopyTask.Source));
             }
             string disk = CopyTasks.First().Destination.Split('\\')[0];
             long freeSpace = FreeSpaceDisk(disk);
-            if(freeSpace > sumFile)
+            if (freeSpace > sumFile)
             {
                 return false;
             }
@@ -56,7 +56,7 @@ namespace CleanMasterXBoostSuper
         {
             foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                if (drive.IsReady && drive.Name == (driveName+@"\"))
+                if (drive.IsReady && drive.Name == (driveName + @"\"))
                 {
                     return drive.TotalFreeSpace;
                 }
@@ -67,12 +67,12 @@ namespace CleanMasterXBoostSuper
         {
             CopyProgress cp = new CopyProgress();
             cp.Show();
-            cp.UpdateProgress(0,"Start");
+            cp.UpdateProgress(0, "Start");
             if (!token.IsCancellationRequested)
             {
                 cp.Close();
             }
-            foreach(CopyTask task in CopyTasks)
+            foreach (CopyTask task in CopyTasks)
             {
                 if (!token.IsCancellationRequested)
                 {
@@ -80,7 +80,7 @@ namespace CleanMasterXBoostSuper
                     if (!isLowFreeSpace())
                     {
                         File.WriteAllText(@"./ToNotCopy.txt", task.FileToNoCopy);
-                        ProcessStartInfo infos = new ProcessStartInfo("xcopy", task.Source + " " + task.Destination + "/q /e /h /v /d /y /i /exclude:ToNotCopy.txt");
+                        ProcessStartInfo infos = new ProcessStartInfo("robocopy.exe", task.Source + " " + task.Destination + " /mir /XO");
                         infos.CreateNoWindow = true;
                         infos.UseShellExecute = false;
                         Process proc = new Process();
@@ -114,7 +114,7 @@ namespace CleanMasterXBoostSuper
             {
                 sumDid = sumDid + DirSize(new DirectoryInfo(CopyTask.Source));
             }
-            float div=(float)sumDid /sumToDo;
+            float div = (float)sumDid / sumToDo;
             float pourcent = div * 100;
             return (int)pourcent;
         }
