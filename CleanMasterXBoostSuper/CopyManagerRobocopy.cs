@@ -79,8 +79,7 @@ namespace CleanMasterXBoostSuper
                     cp.Update();
                     if (!isLowFreeSpace())
                     {
-                        File.WriteAllText(@"./ToNotCopy.txt", task.FileToNoCopy);
-                        ProcessStartInfo infos = new ProcessStartInfo("robocopy.exe", task.Source + " " + task.Destination + " /mir /XO");
+                        ProcessStartInfo infos = new ProcessStartInfo("robocopy.exe", task.Source + " " + task.Destination + " /mir /XO ");
                         infos.CreateNoWindow = true;
                         infos.UseShellExecute = false;
                         Process proc = new Process();
@@ -100,7 +99,6 @@ namespace CleanMasterXBoostSuper
                     }
                 }
             }
-            File.Delete(@"./ToNotCopy.txt");
         }
         public int TaskState()
         {
