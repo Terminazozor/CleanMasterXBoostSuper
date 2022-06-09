@@ -1,0 +1,3 @@
+﻿les semaphore permet de mettre a la disposition des threads un nombre de resources definit et les thread peuvent les liberer ou les aloué si il y en a de disponible 
+alors que le mutex lui verouille les resource et le thread doit recuperer le verouillage si il veut utiliser les resources 
+en gros les semaphore permette a un nombre donné de processus d'acquerir des resource en meme temps alors que le mutex permet d'alouer une resource a des thread quand il obtiene le verouillage

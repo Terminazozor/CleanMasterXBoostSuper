@@ -22,7 +22,7 @@ namespace CleanMasterXBoostSuper
         }
         public void UpdateProgress(int progress,string file)
         {
-            progressBar1.Value= progress;
+            //progressBar1.Value= progress;
             label1.Text= file;
         }
     }
