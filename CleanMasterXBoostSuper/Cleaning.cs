@@ -23,8 +23,8 @@ namespace CleanMasterXBoostSuper
                 return proc.ExitCode;
             }
         }
-        public void DoCleaning(CancellationToken token) {
-            if (LunchCleaning(token) == 0)
+        public void DoCleaning() {
+            if (LunchCleaning() == 0)
             {
                 Happening = "Nettoyage reussis\n";
             }
@@ -33,14 +33,14 @@ namespace CleanMasterXBoostSuper
                 Happening = "Erreur dans le nettoyage\n";
             }
         }
-        public int LunchCleaning(CancellationToken token)
+        public int LunchCleaning()
         {
-            ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe","sagerun:1");
-            using(Process proc = Process.Start(infos))
+            ProcessStartInfo infos = new ProcessStartInfo("cleanmgr.exe", "sagerun:1");
+            using (Process proc = Process.Start(infos))
             {
                 while (!proc.HasExited)
                 {
-                    if (token.IsCancellationRequested)
+                    if (false)
                     {
                         proc.Kill();
                     }
